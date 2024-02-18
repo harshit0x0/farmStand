@@ -10,3 +10,7 @@ An app to track and manage data of all the products that are sold by a farm.
   </ul>
 <div> 
 
+<div>
+  (only available on localhost right now)
+</div>
+
