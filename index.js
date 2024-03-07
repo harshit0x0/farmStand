@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const methodOverride = require("method-override");
-
+const Farm = require('./models/farm')
 const Product = require('./models/product');
 const mongoose = require("mongoose");
 main().catch(err => console.log(err));
@@ -21,6 +21,47 @@ app.listen(3000, () => {
     console.log("listening on port 3000");
 })
 
+
+//FARM ROUTES
+
+app.get('/farms/new', (req, res) => {
+    res.render("farms/new.ejs");
+})
+
+
+app.get('/farms', async (req, res) => {
+    const farms = await Farm.find({});
+    res.render('farms/farms.ejs', { farms })
+})
+
+app.get('/farms/:id', async (req, res) => {
+    const { id } = req.params;
+    const farm = await Farm.findById(id);
+    res.render('farms/details.ejs', { farm });
+})
+
+app.get('/farms/:id/products/new', (req, res) => {
+    const { id } = req.params;
+    res.render('products/new', { id })
+})
+
+app.post('/farms/:id/products', async (req, res) => {
+    const newProduct = new Product(req.body);
+    const farm = await Farm.findById(req.params.id);
+    farm.products.push(newProduct);
+    newProduct.farm = farm;
+    await newProduct.save();
+    await farm.save();
+    res.send(farm);
+})
+
+app.post('/farms', async (req, res) => {
+    const newFarm = new Farm(req.body);
+    await newFarm.save();
+    res.redirect("/farms");
+})
+
+//PRODUCT ROUTES
 
 app.get('/products/new', (req, res) => {
     res.render("products/new.ejs");
