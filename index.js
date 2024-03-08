@@ -24,6 +24,10 @@ app.listen(3000, () => {
 
 //FARM ROUTES
 
+app.get('/', (req, res) => {
+    res.redirect('/farms');
+})
+
 app.get('/farms/new', (req, res) => {
     res.render("farms/new.ejs");
 })
@@ -36,13 +40,14 @@ app.get('/farms', async (req, res) => {
 
 app.get('/farms/:id', async (req, res) => {
     const { id } = req.params;
-    const farm = await Farm.findById(id);
+    const farm = await Farm.findById(id).populate("products");
     res.render('farms/details.ejs', { farm });
 })
 
-app.get('/farms/:id/products/new', (req, res) => {
+app.get('/farms/:id/products/new', async (req, res) => {
     const { id } = req.params;
-    res.render('products/new', { id })
+    const farm = await Farm.findById(id);
+    res.render('products/new', { id, farm })
 })
 
 app.post('/farms/:id/products', async (req, res) => {
@@ -52,7 +57,7 @@ app.post('/farms/:id/products', async (req, res) => {
     newProduct.farm = farm;
     await newProduct.save();
     await farm.save();
-    res.send(farm);
+    res.redirect(`/farms/${req.params.id}`);
 })
 
 app.post('/farms', async (req, res) => {
@@ -67,9 +72,19 @@ app.get('/products/new', (req, res) => {
     res.render("products/new.ejs");
 })
 
+app.get('/products/category', async (req, res) => {
+    const { category } = req.query;
+    if (!category) {
+        const products = await Product.find({});
+        res.render('products/index.ejs', { products })
+    }
+    const products = await Product.find({ category: category });
+    res.render("products/productsByCategory.ejs", { products });
+})
+
 app.get('/products/:id', async (req, res) => {
     const { id } = req.params;
-    const product = await Product.findById(id);
+    const product = await Product.findById(id).populate('farm');
     res.render('products/details.ejs', { product });
 })
 
@@ -79,16 +94,6 @@ app.get('/products/:id/edit', async (req, res) => {
     res.render("products/edit.ejs", { selectedProduct });
 })
 
-app.get('/products', async (req, res) => {
-
-    const { category } = req.query;
-    if (!category) {
-        const products = await Product.find({});
-        res.render('products/index.ejs', { products })
-    }
-    const products = await Product.find({ category: category });
-    res.render("products/productsByCategory.ejs", { products });
-})
 
 app.get('/products', async (req, res) => {
     const products = await Product.find({});

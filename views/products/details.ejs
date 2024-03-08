@@ -12,7 +12,9 @@
     <section>
         <ul>
             <li>price: $<%= product.price %> </li>
-            <li>category: <a href="/products/?category=<%= product.category %>"><%= product.category %></a> </li>
+            <li>category: <a href="/products/category/?category=<%= product.category %>"><%= product.category %></a>
+            </li>
+            <li>farm: <a href="/farms/<%= product.farm._id %>"><%= product.farm.name %></a></li>
         </ul>
     </section>
     <a href="/products/<%= product._id %>/edit">edit product</a>
