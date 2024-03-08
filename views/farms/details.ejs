@@ -17,7 +17,9 @@
         <h3>products</h3>
         <ul>
             <% for (let product of farm.products){ %>
-            <a href="/products/<%= product._id %>"> <%= product.name %></a>
+            <li>
+                <a href="/products/<%= product._id %>"> <%= product.name %></a>
+            </li>
             <% } %>
         </ul>
 
