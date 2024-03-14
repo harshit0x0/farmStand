@@ -1,5 +1,5 @@
 # farmStand
-An app to track and manage data of Various farms all the products that are sold by a farm. 
+An app to track and manage data of Various farms and all the products that are sold by a farm. 
 <div>
 <h3>full CRUD functionality</h3>
   <ul>
